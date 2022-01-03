@@ -229,13 +229,7 @@ int RetrieveData(const int[] bytes, int[] out)
 	    	out[outCursor + x] = gbytes.ReadByte();
 	    }
 	    gbytes.Close();
-	    /*
-	    do
-	    {
-	      out[outCursor + nameLength] = 's';
-	      nameLength++;
-	    } while(bytes[cursor + nameLength] != '\0');
-	*/
+
 	    cursor += nameLength; // skip name + null
 	    outCursor += nameLength;
 		
