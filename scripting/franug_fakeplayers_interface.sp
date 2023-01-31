@@ -28,7 +28,7 @@ public Plugin myinfo =
 	name = "SM Franug FakePlayers Interface",
 	author = "Franc1sco franug",
 	description = "",
-	version = "0.1",
+	version = "0.2",
 	url = "http://steamcommunity.com/id/franug"
 }
 
@@ -99,7 +99,8 @@ public void OnPluginStart()
   else
   {
     DHookAddParam(hNetSendPacket, HookParamType_Int);
-    DHookAddParam(hNetSendPacket, HookParamType_ObjectPtr, -1, DHookPass_ByRef);
+    //DHookAddParam(hNetSendPacket, HookParamType_ObjectPtr, -1, DHookPass_ByRef);
+    DHookAddParam(hNetSendPacket, HookParamType_Int);
   }
   DHookAddParam(hNetSendPacket, HookParamType_Int);
   DHookAddParam(hNetSendPacket, HookParamType_Int);
