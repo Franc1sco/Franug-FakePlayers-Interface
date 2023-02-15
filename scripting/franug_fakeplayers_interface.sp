@@ -28,7 +28,7 @@ public Plugin myinfo =
 	name = "SM Franug FakePlayers Interface",
 	author = "Franc1sco franug",
 	description = "",
-	version = "0.2",
+	version = "0.3",
 	url = "http://steamcommunity.com/id/franug"
 }
 
@@ -43,10 +43,13 @@ Handle array_bots_name;
 Handle array_bots_score;
 Handle array_bots_time;
 
+int thetime;
+
 public APLRes AskPluginLoad2(Handle plugin, bool late, char[] error, int err_max)
 {
 	RegPluginLibrary("FranugFakePlayers");
 	CreateNative("FranugFakePlayers_AddBot", Native_AddBot);
+	CreateNative("FranugFakePlayers_RemoveBot", Native_RemoveBot);
 	CreateNative("FranugFakePlayers_ResetBots", Native_ResetBots);
 	return APLRes_Success;
 }
@@ -57,6 +60,14 @@ public Native_AddBot(Handle plugin, int argc)
 	GetNativeString(1, name, MAX_NAME_LENGTH);
 
 	addBot(name, GetNativeCell(2), GetNativeCell(3));
+}
+
+public Native_RemoveBot(Handle plugin, int argc)
+{  
+	char name[MAX_NAME_LENGTH];
+	GetNativeString(1, name, MAX_NAME_LENGTH);
+
+	removeBot(name);
 }
 
 public Native_ResetBots(Handle plugin, int argc)
@@ -109,6 +120,12 @@ public void OnPluginStart()
   if (!DHookEnableDetour(hNetSendPacket, false, Detour_OnNetSendPacket))
       SetFailState("Failed to detour NET_SendPacket.");
   
+  CreateTimer(1.0, Timer_Repeat, _, TIMER_REPEAT);
+}
+
+public Action Timer_Repeat(Handle timer)
+{
+	thetime++;
 }
 
 void addBot(char name[128], int time, int score)
@@ -120,7 +137,18 @@ void addBot(char name[128], int time, int score)
 	
 	PushArrayString(array_bots_name, fakeplayer.name);
 	PushArrayCell(array_bots_score, fakeplayer.score);
-	PushArrayCell(array_bots_time, fakeplayer.time);
+	PushArrayCell(array_bots_time, fakeplayer.time-(thetime*10000));
+}
+
+void removeBot(char name[128])
+{
+	int bot = FindStringInArray(array_bots_name, name);
+	
+	if(bot != -1) {
+		RemoveFromArray(array_bots_name, bot);
+		RemoveFromArray(array_bots_score, bot);
+		RemoveFromArray(array_bots_time, bot);
+	}
 }
 
 int GetInfoPlayersIndex(const int[] bytes)
